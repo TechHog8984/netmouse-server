@@ -1,7 +1,7 @@
 import { WebSocketServer } from "ws";
 import { exec } from "child_process";
 
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: 22322 });
 
 var screenwidth = 1920;
 var screenheight = 1080;
