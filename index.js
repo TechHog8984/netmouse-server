@@ -105,7 +105,7 @@ wss.on("connection", function connection(ws) {
             return;
         }
         if (datastr.startsWith("screensize")) {
-            var [x, y] = getVector(datastr.substring(11));
+            var [x, y] = getVector(datastr.substring(10));
             console.log("screensize from game " + x + ", " + y);
             gamescreenwidth = x;
             gamescreenheight = y;
