@@ -1,7 +1,14 @@
 import { WebSocketServer } from "ws";
 import { exec } from "child_process";
+import { URL, parse } from "url";
 
 const wss = new WebSocketServer({ port: 22322 });
+
+const BROWSER = process.env.BROWSER;
+if (!BROWSER) {
+    console.error("missing env variable BROWSER (which should be the name of an executable in path to use with openurl)");
+    process.exit(1);
+}
 
 var screenwidth = 1920;
 var screenheight = 1080;
@@ -30,6 +37,17 @@ function getVector(input) {
 
     return [x, y]
 }
+
+function checkUrl(str) {
+    try {
+        var url = new URL(str);
+        return url.protocol
+                ? ["http", "https"].map(x => `${x.toLowerCase()}:`).includes(url.protocol)
+                : false
+    } catch (err) {
+        return false;
+    }
+};
 
 wss.on("connection", function connection(ws) {
     if (failedtograbresolution)
@@ -110,6 +128,17 @@ wss.on("connection", function connection(ws) {
             gamescreenwidth = x;
             gamescreenheight = y;
 
+            ws.send("k");
+            return;
+        }
+        if (datastr.startsWith("openurl")) {
+            var url = datastr.substring(7);
+            if (!checkUrl(url)) {
+                ws.send("bad input");
+                return;
+            }
+
+            exec(`${BROWSER} ${url}`);
             ws.send("k");
             return;
         }
